@@ -7,8 +7,8 @@
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.0.4.RELEASE</version>
 	</parent>
-	<groupId>net.nickmowen</groupId>
-	<artifactId>spring-boot-tutorial-test</artifactId>
+	<groupId>com.o1teck</groupId>
+	<artifactId>the-hobby-lobby</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<description>								</description>
 	<dependencies>

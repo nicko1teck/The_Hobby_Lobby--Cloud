@@ -1,1 +1,1 @@
-web: java $JAVA_OPTS -cp target/classes:target/dependency/* com.o1teck.the-hobby-lobby
+web: java -cp target/classes/:target/dependency/* com.o1teck.app

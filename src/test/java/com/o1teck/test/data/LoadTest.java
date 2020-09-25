@@ -28,6 +28,8 @@ import com.o1teck.service.InterestService;
 import com.o1teck.service.ProfileService;
 import com.o1teck.service.UserService;
 
+
+/*
 //@SpringBootConfiguration
 //@RunWith(SpringJUnit4ClassRunner.class)
 @RunWith(SpringRunner.class)
@@ -185,5 +187,5 @@ public class LoadTest {
 		
 		assertTrue(true);
 	}
-	*/	
-}
+	
+}*/

@@ -1,1 +1,1 @@
-web: java -cp target/classes/:target/dependency/* com.o1teck.app
+web: java -cp target/classes/:target/dependency/* com.o1teck.App

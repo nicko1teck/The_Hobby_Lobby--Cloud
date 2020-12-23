@@ -56,6 +56,22 @@ public class SiteUser {
 	private String repeatPassword;
 	
 	
+	//@Column(name="profile_photo_name")
+	//private String profilePhotoName;
+	
+	@Column(name="profile_photo_url")
+	private String profilePhotoUrl;
+	
+	
+	
+	public String getProfilePhotoUrl() {
+		return profilePhotoUrl;
+	}
+
+	public void setProfilePhotoUrl(String profilePhotoUrl) {
+		this.profilePhotoUrl = profilePhotoUrl;
+	}
+
 	public SiteUser(){
 		
 	}
@@ -66,6 +82,37 @@ public class SiteUser {
 		this.email = email;
 		this.setPlainPassword(password);
 		this.repeatPassword = password;
+		this.profilePhotoUrl = "https://res.cloudinary.com/nicko1teck/image/upload/v1603334618/vbux7ajerlgvplrzsrm6.jpg";
+	}
+	
+	
+	
+	
+
+	public String getProfilePhotoName() {
+		return profilePhotoUrl;
+	}
+
+	public void setProfilePhotoName(String profilePhotoName) {
+		this.profilePhotoUrl = profilePhotoName;
+	}
+
+	public SiteUser(Long id, @Email(message = "{register.email.invalid}") String email,
+			@Size(min = 2, max = 20, message = "{register.firstname.size}") String firstname,
+			@Size(min = 2, max = 25, message = "{register.surname.size}") String surname, String role, boolean enabled,
+			@Size(min = 4, max = 15, message = "{register.password.size}") String plainPassword, String repeatPassword,
+			String profilePhotoUrl, String password) {
+		super();
+		this.id = id;
+		this.email = email;
+		this.firstname = firstname;
+		this.surname = surname;
+		this.role = role;
+		this.enabled = enabled;
+		this.plainPassword = plainPassword;
+		this.repeatPassword = repeatPassword;
+		this.profilePhotoUrl = profilePhotoUrl;
+		this.password = password;
 	}
 
 	public String getFirstname() {

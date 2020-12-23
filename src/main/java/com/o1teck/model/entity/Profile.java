@@ -1,4 +1,4 @@
-package com.o1teck.model.entity;
+  package com.o1teck.model.entity;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -48,6 +48,8 @@ public class Profile {
 	
 	//Once we have these variables(below) we can save this info in the Controller
 	
+	/*
+	
 	@Column(name="photo_directory", length=20)
 	private String photoDirectory;
 	
@@ -57,7 +59,9 @@ public class Profile {
 	@Column(name="photo_extension", length=5)
 	private String photoExtension;
 	
+	*/
 	
+	 
 	/*
 	 * the the JoinTable annotation....  This is implemented behind the scenes by Hibernate creating a Join table,
 	 * where each row has the id of ONE profile and the name of ONE interest.
@@ -73,6 +77,15 @@ public class Profile {
 	*/
 	private Set<Interest> interests;
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	public Profile(){
 
 	}
@@ -84,10 +97,11 @@ public class Profile {
 	
 	//Helper method
 	public void setPhotoDetails(FileInfo info){
-		
+		/*
 		photoDirectory = info.getSubDirectory();
 		photoName = info.getBasename();
 		photoExtension = info.getExtension();
+		*/
 	}
 	
 
@@ -100,10 +114,11 @@ public class Profile {
 		this.interests = interests;
 	}
 
-
+/*
 	//Helper method
 	//we pass in the baseDir because that is not known in the profile
 	public Path getPhoto(String baseDirectory){
+		
 		
 		//also check for situation where photo has not been set in profile
 		if(photoName == null){
@@ -111,8 +126,9 @@ public class Profile {
 		}
 		
 		return Paths.get(baseDirectory, photoDirectory, photoName + "." + photoExtension);
+		
 	}
-	
+	*/
 	
 	public long getId() {
 		return id;
@@ -138,6 +154,9 @@ public class Profile {
 		this.about = about;
 	}
 
+	
+	/*
+	
 	public String getPhotoDirectory() {
 		return photoDirectory;
 	}
@@ -162,6 +181,11 @@ public class Profile {
 		this.photoExtension = photoExtension;
 	}
 
+	*/
+	
+	
+	
+	
 	/*
 	 * Create a profile that is suitable for displaying via JSP
 	 * i.e. no identifying/private info (e.g. passwords)

@@ -45,7 +45,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 					"/profilephoto/*",
 					"/verifyemail",
 					"/confirmregister",
-					"/search"
+					"/search",
+					"/photos/*",
+					"/upload/*",
+					"/upload",
+					"http://res.cloudinary.com/**"
 					)
 			.permitAll()
 			.antMatchers(
@@ -72,7 +76,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 					"/messagecount",
 					"/convo/**",
 					"/messages",
-					"/markread"
+					"/markread",
+					"/profilephoto"
 					)
 			.authenticated()
 			.anyRequest()

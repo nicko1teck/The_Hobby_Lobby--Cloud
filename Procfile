@@ -1,1 +1,0 @@
-web: java -jar target/the-hobby-lobby.jar

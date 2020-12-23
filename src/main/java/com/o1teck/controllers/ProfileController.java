@@ -1,15 +1,21 @@
 package com.o1teck.controllers;
 
+
+import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.Map;
 import java.util.Optional;
 
+import javax.servlet.ServletException;
 import javax.validation.Valid;
 
+import org.cloudinary.json.JSONObject;
 import org.owasp.html.PolicyFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,30 +26,39 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
+//import org.springframework.util.ObjectUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.o1teck.exceptions.ImageTooSmallException;
-import com.o1teck.exceptions.InvalidFileException;
-import com.o1teck.model.dto.FileInfo;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+//import com.o1teck.MockMultipartFile;
 import com.o1teck.model.entity.Interest;
 import com.o1teck.model.entity.Profile;
 import com.o1teck.model.entity.SiteUser;
 import com.o1teck.model.repository.UserDao;
+import com.o1teck.service.CloudinaryService;
 import com.o1teck.service.FileService;
 import com.o1teck.service.InterestService;
 import com.o1teck.service.ProfileService;
 import com.o1teck.service.UserService;
-import com.o1teck.status.PhotoUploadStatus;
+
 
 @Controller
 public class ProfileController {
+	
+	@Autowired
+    private Cloudinary cloudinary;
 
 	@Autowired
 	private FileService fileService;
@@ -53,15 +68,18 @@ public class ProfileController {
 
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private InterestService interestService;
 
 	@Autowired
 	private PolicyFactory htmlPolicy;
-	
+
 	@Autowired
 	private UserDao userDao;
+	
+	//private String profilePhotoName;
+	
 	
 	@Value("${photo.upload.directory}")
 	private String photoUploadDirectory;
@@ -77,95 +95,97 @@ public class ProfileController {
 
 	@Value("${photo.upload.toosmall}")
 	private String photoStatusTooSmall;
-
 	
+	
+	
+	
+
 	private SiteUser getUser() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String email = auth.getName();
 		return userService.get(email);
 	}
 
-	private ModelAndView showProfile(SiteUser user){
+	private ModelAndView showProfile(SiteUser user) {
 		ModelAndView modelAndView = new ModelAndView();
-		
-		if (user==null){
+
+		if (user == null) {
 			modelAndView.setViewName("redirect:/");
 			return modelAndView;
 		}
-		
+
 		Profile profile = profileService.getUserProfile(user);
-	
+
 		if (profile == null) {
 			profile = new Profile();
 			profile.setUser(user);
 			profileService.save(profile);
 		}
-		
+
 		Profile webProfile = new Profile();
 		webProfile.safeCopyFrom(profile);
-		
+
 		modelAndView.getModel().put("userId", user.getId());
 		modelAndView.getModel().put("profile", webProfile);
 
 		modelAndView.setViewName("app.profile");
-		
+
 		return modelAndView;
 	}
-	
-	
-	//To show Profile of the CURRENT USER
-		//Calls:  showProfile(user)
+
+	// To show Profile of the CURRENT USER
+	// Calls: showProfile(user)
 	@RequestMapping(value = "/profile")
 	public ModelAndView showProfile() {
 
 		SiteUser user = getUser();
-		
+
 		String firstname = user.getFirstname();
 		String surname = user.getSurname();
 
-		ModelAndView modelAndView = showProfile(user); //This is our new refactored method above
-		
-		modelAndView.getModel().put("ownProfile",  true);
+		ModelAndView modelAndView = showProfile(user); // This is our new refactored method above
+
+		modelAndView.getModel().put("ownProfile", true);
 		modelAndView.getModel().put("firstname", firstname);
 		modelAndView.getModel().put("surname", surname);
-		
+
 		return modelAndView;
 	}
+
 	
 	
 	@RequestMapping(value = "/profile/{id}")
 	public ModelAndView showProfile(@PathVariable("id") Long id) {
-		//Before, it was enough to get the current user with this private method
-		//SiteUser user = getUser();   But now we want to see profiles of other users, so we need to 'get' a different way
 		
-		//So use the PathVariable(id) to get the corresponding user...
+		// use the PathVariable(id) to get the corresponding user...
 		Optional<SiteUser> userOpt = userService.get(id);
 		SiteUser user = userOpt.get();
-		
+
 		String firstname = user.getFirstname();
 		String surname = user.getSurname();
-		
-		//And maybe create our modelAndView for returning 
+
+		// And maybe create our modelAndView for returning
 		ModelAndView modelAndView = new ModelAndView();
-		
-		//now to get the user...
-		if (user != null){
-			
-			//set modelAndView equal to show profile? (must be an M&V return method)
+
+		// now to get the user...
+		if (user != null) {
+
+			// set modelAndView equal to show profile? (must be an M&V return method)
 			modelAndView = showProfile(user);
-			
-			modelAndView.getModel().put("ownProfile",  false);
+
+			modelAndView.getModel().put("ownProfile", false);
 			modelAndView.getModel().put("firstname", firstname);
 			modelAndView.getModel().put("surname", surname);
-			
+
 			return modelAndView;
-			
+
 		} else {
 			modelAndView.setViewName("redirect:/");
 			return modelAndView;
 		}
 	}
 
+	
 	
 	@RequestMapping(value = "/edit-profile-about", method = RequestMethod.GET)
 	public ModelAndView editProfile(ModelAndView modelAndView) {
@@ -185,8 +205,10 @@ public class ProfileController {
 
 		return modelAndView;
 	}
-	
 
+	
+	
+	
 	@RequestMapping(value = "/edit-profile-about", method = RequestMethod.POST)
 	ModelAndView editProfile(ModelAndView modelAndView, @Valid Profile webProfile, BindingResult result) {
 
@@ -204,126 +226,219 @@ public class ProfileController {
 		}
 		return modelAndView;
 	}
-
-	// In this method we are calling saveImageFile(), but
-	// that method makes up a new/random name for our image.
-	// Therefore, we need some object that saveImageFile() can pass BACK to the
-	// profile controller, so it can save that information.
-	// 
-	// Why?
-	// Because we need to be able to save the details of the file that's being
-	// saved and created.
-	@RequestMapping(value = "/upload-profile-photo", method = RequestMethod.POST)
-	@ResponseBody // returns data in JASON format
-	public ResponseEntity<PhotoUploadStatus> handlePhotoUploads(@RequestParam("file") MultipartFile file) {
-
-		// First, get the user -- with our utility method
-		SiteUser user = getUser();
-
-		// Then get the user's profile and pass in the info
-		Profile profile = profileService.getUserProfile(user);
-
-		Path oldPhotoPath = profile.getPhoto(photoUploadDirectory);
-
-		PhotoUploadStatus status = new PhotoUploadStatus(photoStatusOK);
-
-		try {
-			FileInfo photoInfo = fileService.saveImageFile(file, photoUploadDirectory, "photos", "p" + user.getId(),
-					100, 100);
-
-			// Having saved the details to fields in the profile class, we can
-			// now...
-			profile.setPhotoDetails(photoInfo);
-			profileService.save(profile);
-
-			//debug
-			//System.out.println();
-			//System.out.println(photoInfo.toString());
-			//System.out.println();
-
-			if (oldPhotoPath != null) {
-				Files.delete(oldPhotoPath);
-			}
-
-		} catch (InvalidFileException e) {
-			System.out.println(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
-			System.out.println(e.getMessage());
-			e.printStackTrace();
-		} catch (ImageTooSmallException e) {
-			System.out.println(e.getMessage());
-			e.printStackTrace();
-		}
-
-		// modelAndView.setViewName("/profile");
-		// return modelAndView;
+	
+	
+	
+	
+	
+	@PostMapping("/upload")
+    @ResponseBody
+    public String uploadFile(Model model, @RequestParam("file") MultipartFile file) throws IOException, URISyntaxException, ServletException {
+    	
+		String imageToUpload = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/2013-Aerial-Mount_of_Olives.jpg/270px-2013-Aerial-Mount_of_Olives.jpg";
+    	
+    	cloudinary.uploader().unsignedUpload(imageToUpload, "apzbavjn", ObjectUtils.asMap("cloud_name", "nicko1teck"));
+    	
+    	return "";
 		
-		return new ResponseEntity(status, HttpStatus.OK);
-	}
+		/*
+	
+		//LOG
+    	System.out.println();
+    	System.out.println("Called the uploadFile() method !");
+    	System.out.println();
+    	
+//    	MultipartFile multipartFile = new MockMultipartFile("sourceFile.temp", file.getBytes());
+//    	File theFile = new File("src/main/resources/targetFile.tmp");
+//    	multipartFile.transferTo(theFile);
 
+    	//1) create a client
+ 
+    	//2) create the post body as required by Cloudinary API
+ 
+    	//3)  send POST request and capture response
+    	
+    	
+    	//Get the timestamp in seconds
+    	Long timestamp = Instant.now().getEpochSecond();
+    	
+    	//LOG
+    	System.out.println();
+    	System.out.println(timestamp);
+    	System.out.println();
+    	
+    	//create sig-request params
+    	List<NameValuePair> paramsToSign = new ArrayList<NameValuePair>();
+    	
+    	//add timestamp to those params
+    	paramsToSign.add(new BasicNameValuePair("timestamp", timestamp.toString()));
+    	
+    	//LOG
+    	System.out.println();
+    	System.out.println(paramsToSign);
+    	System.out.println();
+    	
+    	//Get the signature using the Java SDK method api_sign_request
+    	String signature = cloudinary.apiSignRequest((Map<String, Object>) paramsToSign, "UFH1ZXH_4UZ8XNHchIj8Lwhpszw"); 
+    	
+    	//LOG
+    	System.out.println();
+    	System.out.println(signature);
+    	System.out.println();
+    	
+    	String imageAddress = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/2013-Aerial-Mount_of_Olives.jpg/270px-2013-Aerial-Mount_of_Olives.jpg";
+    	
+    	CloseableHttpClient client = HttpClients.createDefault();
+    	
+    	HttpPost httpPost = new HttpPost("https://api.cloudinary.com/v1_1/nicko1teck/image/upload");
+    	
+    	List<NameValuePair> params = new ArrayList<NameValuePair>();
+    	
+    	params.add(new BasicNameValuePair("file", imageAddress));
+    	
+    	params.add(new BasicNameValuePair("signature", signature));
+    	
+    	httpPost.setEntity(new UrlEncodedFormEntity(params));
+    	
+    	CloseableHttpResponse response = client.execute(httpPost);
+    	
+    	client.close();
+    	
+    	//JSONObject json=new JSONObject(authResponse);
+    	
+    	//String url=json.getString("url");
+    	
+    	return response.toString();
+    	
+    	*/
+		
+		
+		
+    	
+    }
+	
+	
+	
+	
+	
+	
 	@RequestMapping(value = "/profilephoto/{id}", method = RequestMethod.GET)
-	// we also need to say that what's returned is not some Tiles mapping, but
-	// rather a load of data that should be displayed directly
 	@ResponseBody
-	// which will then be wrapped in this ResponseEntity, in other words...
-	// What we're going to send in the body if this response is an
-	// InputStreamResource which will contain the data of our photo
-	ResponseEntity<InputStreamResource> servePhoto(@PathVariable Long id)throws IOException {
+	ResponseEntity<InputStreamResource> servePhoto(@PathVariable Long id) throws IOException, URISyntaxException {
 
-		//SiteUser user = userService.get(id);
+		// SiteUser user = userService.get(id);
 		Optional<SiteUser> userOpt = userService.get(id);
 		SiteUser user = userOpt.get();
 
 		Profile profile = profileService.getUserProfile(user);
 
-		Path photoPath = Paths.get(photoUploadDirectory, "default", "productive-hobbies100x100.jpg");
-		//Path photoPath2 = Paths.get(photoUploadDirectory, "default");
-		
-		if (profile != null && profile.getPhoto(photoUploadDirectory) != null) {
-			photoPath = profile.getPhoto(photoUploadDirectory);
-		}
+		// example Cloudinary image URL
+		// https://res.cloudinary.com/nicko1teck/image/upload/v1602199667/MTDeductive_100x100_gubzzf.jpg
 
-		return ResponseEntity.ok()
-				.contentLength(Files.size(photoPath))
+		String photoPathString = "https://res.cloudinary.com/nicko1teck/image/upload/v1603731768/my_folder/my_sub_folder/" + "${profile.profilePhotoName}";
+		Path photoPath = Paths.get(photoPathString);
+		System.out.println();
+		System.out.println();
+		System.out.println("Testing for photo URL construction: ");
+		System.out.println(photoPathString);
+		System.out.println();
+		System.out.println();
+		
+		/*
+		Path photoPath = Paths.get(new URI(
+				"https://res.cloudinary.com/nicko1teck/image/fetch/https://res.cloudinary.com/nicko1teck/image/upload/v1602199667/MTDeductive_100x100_gubzzf.jpg"));
+
+		*/
+		
+		
+		
+		//Path photoPath = Paths.get(photoUploadDirectory, "default","productive-hobbies100x100.jpg");
+
+		/*
+		 * Excluding this code to see if I can get a Cloudinary image to serve here,
+		 * found at the above URL
+		 * 
+		 * if (profile != null && profile.getPhoto(photoUploadDirectory) != null) {
+		 * photoPath = profile.getPhoto(photoUploadDirectory); }
+		 * 
+		 */
+
+		return ResponseEntity.ok().contentLength(Files.size(photoPath))
 				.contentType(MediaType.parseMediaType(URLConnection.guessContentTypeFromName(photoPath.toString())))
 				.body(new InputStreamResource(Files.newInputStream(photoPath, StandardOpenOption.READ)));
 	}
 
+	/*
+	 * 
+	 * @RequestMapping(value = "/profilephoto/{id}", method = RequestMethod.GET)
+	 * 
+	 * @ResponseBody ResponseEntity<InputStreamResource> servePhoto2(@PathVariable
+	 * Long id)throws IOException {
+	 * 
+	 * 
+	 * Optional<SiteUser> userOpt = userService.get(id); SiteUser user =
+	 * userOpt.get(); Profile profile = profileService.getUserProfile(user);
+	 * 
+	 * 
+	 * Path photoPath = Paths.get(photoUploadDirectory, "default",
+	 * "productive-hobbies100x100.jpg"); //Path photoPath2 =
+	 * Paths.get(photoUploadDirectory, "default");
+	 * 
+	 * if (profile != null && profile.getPhoto(photoUploadDirectory) != null) {
+	 * photoPath = profile.getPhoto(photoUploadDirectory); }
+	 * 
+	 * return ResponseEntity.ok() .contentLength(Files.size(photoPath))
+	 * .contentType(MediaType.parseMediaType(URLConnection.guessContentTypeFromName(
+	 * photoPath.toString()))) .body(new
+	 * InputStreamResource(Files.newInputStream(photoPath,
+	 * StandardOpenOption.READ))); }
+	 * 
+	 * 
+	 */
+
 	
-	//We want methods for saving/deleting interests, but how we do this completely depends on 
-	//how we implement the list of interests
-		//For instance, we could do something similar to how we did Status Update
-		//(only difference is that Interests are associated with a particular profile)
-	//what we want is a method that we can post data to, and it will save our interets and return an httpresponse code
-	@RequestMapping(value="/save-interest", method=RequestMethod.POST)
-	@ResponseBody //this method returns whatever it does... no view name for Tiles or anything like that.
-	public ResponseEntity<?> saveInterest(@RequestParam("name") String interestName){
-		
+	
+	@RequestMapping(value = "/save-interest", method = RequestMethod.POST)
+	@ResponseBody // this method returns whatever it does... no view name for Tiles or anything
+					// like that.
+	public ResponseEntity<?> saveInterest(@RequestParam("name") String interestName) {
+
 		SiteUser user = getUser();
-		Profile profile=profileService.getUserProfile(user);
-		
+		Profile profile = profileService.getUserProfile(user);
+
 		String cleanedInterestName = htmlPolicy.sanitize(interestName);
-		
+
 		Interest interest = interestService.createIfNotExists(cleanedInterestName);
-		
+
 		profile.addInterest(interest);
 		profileService.save(profile);
-		
+
 		return new ResponseEntity<>(null, HttpStatus.OK);
 	}
 	
-	@RequestMapping(value="delete-interest", method=RequestMethod.POST)
+	
+
+	@RequestMapping(value = "delete-interest", method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseEntity<?> deleteInterest(@RequestParam("name") String interestName) {
-		
+
 		SiteUser user = getUser();
-		Profile profile=profileService.getUserProfile(user);
-		
+		Profile profile = profileService.getUserProfile(user);
+
 		profile.removeInterest(interestName);
-		
+
 		profileService.save(profile);
 		
+		System.out.println();
+		System.out.println();
+		System.out.println("IS ANYTHING FUCKING WORKING?");
+		System.out.println();
+		System.out.println();
+
 		return new ResponseEntity<>(null, HttpStatus.OK);
 	}
+
+	
+	
+	
 }

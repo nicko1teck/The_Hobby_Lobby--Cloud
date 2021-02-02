@@ -78,14 +78,7 @@ public class Profile {
 	private Set<Interest> interests;
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	public Profile(){
 
 	}

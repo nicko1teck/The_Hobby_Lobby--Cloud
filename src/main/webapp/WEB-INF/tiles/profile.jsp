@@ -77,11 +77,6 @@
 					</c:otherwise>
 				</c:choose>
 				
-				<!-- TEST -->
-				<img src="http://res.cloudinary.com/nicko1teck/image/upload/v1604012046/my_folder/my_sub_folder/${profile.profilePhotoName}"/>
-				<img src=${profilePhotoName}>
-				<!-- END TEST -->
-				
 			</div>
 		</div>
 

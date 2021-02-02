@@ -3,6 +3,7 @@ package com.o1teck.controllers;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLConnection;
 import java.nio.file.Files;
@@ -124,9 +125,13 @@ public class ProfileController {
 
 		Profile webProfile = new Profile();
 		webProfile.safeCopyFrom(profile);
+		
+			//modelAndView = showProfile(user);
 
 		modelAndView.getModel().put("userId", user.getId());
 		modelAndView.getModel().put("profile", webProfile);
+		modelAndView.getModel().put("firstname", user.getFirstname());
+			modelAndView.getModel().put("userPhotoUrl", user.getProfilePhotoUrl());
 
 		modelAndView.setViewName("app.profile");
 
@@ -139,15 +144,20 @@ public class ProfileController {
 	public ModelAndView showProfile() {
 
 		SiteUser user = getUser();
+			//Profile profile = profileService.getUserProfile(user);
 
 		String firstname = user.getFirstname();
 		String surname = user.getSurname();
-
+			String profilePhotoUrl = user.getProfilePhotoUrl();
+			String profilePhotoName = user.getProfilePhotoName();
+			
 		ModelAndView modelAndView = showProfile(user); // This is our new refactored method above
-
+		
 		modelAndView.getModel().put("ownProfile", true);
 		modelAndView.getModel().put("firstname", firstname);
 		modelAndView.getModel().put("surname", surname);
+			modelAndView.getModel().put("userPhotoUrl", profilePhotoUrl);
+			modelAndView.getModel().put("userPhotoName", profilePhotoName);
 
 		return modelAndView;
 	}
@@ -233,88 +243,48 @@ public class ProfileController {
 	
 	@PostMapping("/upload")
     @ResponseBody
-    public String uploadFile(Model model, @RequestParam("file") MultipartFile file) throws IOException, URISyntaxException, ServletException {
-    	
-		String imageToUpload = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/2013-Aerial-Mount_of_Olives.jpg/270px-2013-Aerial-Mount_of_Olives.jpg";
-    	
-    	cloudinary.uploader().unsignedUpload(imageToUpload, "apzbavjn", ObjectUtils.asMap("cloud_name", "nicko1teck"));
-    	
-    	return "";
+    public ModelAndView uploadFile(ModelAndView modelAndView, @RequestParam("file") MultipartFile file) throws IOException, URISyntaxException, ServletException {
+    			
+		// Get the file's bytes
+		byte[] fileBytes = file.getBytes();
 		
-		/*
+		// Upload to cloudinary
+    	Map responseMap = cloudinary.uploader().unsignedUpload(fileBytes, "apzbavjn", ObjectUtils.asMap("cloud_name", "nicko1teck"));
+    	
+    	// Turn response into JSON data
+    	JSONObject json=new JSONObject(responseMap);
+    	
+    	// extract the photo's URL
+    	String url=json.getString("url");
+    	
+    	// ... and it's Cloudinary ID/name
+    	String imageName=json.getString("public_id");
+    
+    	// get the current user
+    	SiteUser user = getUser();
+    	
+    	// get that user's profile
+		Profile profile = profileService.getUserProfile(user);
+		
+		modelAndView = showProfile(user);
+		
+		//Add the data we need
+		modelAndView.getModel().put("firstname", getUser().getFirstname());
+    	modelAndView.getModel().put("interests", profile.getInterests());
+    	modelAndView.getModel().put("ownProfile", true);
+    	modelAndView.getModel().put("userPhotoUrl", url);
+    	modelAndView.getModel().put("userPhotoName", imageName);
+		
+		// set our new values to the User object
+		user.setProfilePhotoUrl(url);
+		user.setProfilePhotoName(imageName);
+		
+		// save the profile and user
+		profileService.save(profile);
+		userService.save(user);
 	
-		//LOG
-    	System.out.println();
-    	System.out.println("Called the uploadFile() method !");
-    	System.out.println();
-    	
-//    	MultipartFile multipartFile = new MockMultipartFile("sourceFile.temp", file.getBytes());
-//    	File theFile = new File("src/main/resources/targetFile.tmp");
-//    	multipartFile.transferTo(theFile);
-
-    	//1) create a client
- 
-    	//2) create the post body as required by Cloudinary API
- 
-    	//3)  send POST request and capture response
-    	
-    	
-    	//Get the timestamp in seconds
-    	Long timestamp = Instant.now().getEpochSecond();
-    	
-    	//LOG
-    	System.out.println();
-    	System.out.println(timestamp);
-    	System.out.println();
-    	
-    	//create sig-request params
-    	List<NameValuePair> paramsToSign = new ArrayList<NameValuePair>();
-    	
-    	//add timestamp to those params
-    	paramsToSign.add(new BasicNameValuePair("timestamp", timestamp.toString()));
-    	
-    	//LOG
-    	System.out.println();
-    	System.out.println(paramsToSign);
-    	System.out.println();
-    	
-    	//Get the signature using the Java SDK method api_sign_request
-    	String signature = cloudinary.apiSignRequest((Map<String, Object>) paramsToSign, "UFH1ZXH_4UZ8XNHchIj8Lwhpszw"); 
-    	
-    	//LOG
-    	System.out.println();
-    	System.out.println(signature);
-    	System.out.println();
-    	
-    	String imageAddress = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/2013-Aerial-Mount_of_Olives.jpg/270px-2013-Aerial-Mount_of_Olives.jpg";
-    	
-    	CloseableHttpClient client = HttpClients.createDefault();
-    	
-    	HttpPost httpPost = new HttpPost("https://api.cloudinary.com/v1_1/nicko1teck/image/upload");
-    	
-    	List<NameValuePair> params = new ArrayList<NameValuePair>();
-    	
-    	params.add(new BasicNameValuePair("file", imageAddress));
-    	
-    	params.add(new BasicNameValuePair("signature", signature));
-    	
-    	httpPost.setEntity(new UrlEncodedFormEntity(params));
-    	
-    	CloseableHttpResponse response = client.execute(httpPost);
-    	
-    	client.close();
-    	
-    	//JSONObject json=new JSONObject(authResponse);
-    	
-    	//String url=json.getString("url");
-    	
-    	return response.toString();
-    	
-    	*/
-		
-		
-		
-    	
+    	//modelAndView.setViewName("app.profile");
+    	return modelAndView;
     }
 	
 	
@@ -332,26 +302,8 @@ public class ProfileController {
 
 		Profile profile = profileService.getUserProfile(user);
 
-		// example Cloudinary image URL
-		// https://res.cloudinary.com/nicko1teck/image/upload/v1602199667/MTDeductive_100x100_gubzzf.jpg
+		Path photoPath = Paths.get(new URI(user.getProfilePhotoUrl()));
 
-		String photoPathString = "https://res.cloudinary.com/nicko1teck/image/upload/v1603731768/my_folder/my_sub_folder/" + "${profile.profilePhotoName}";
-		Path photoPath = Paths.get(photoPathString);
-		System.out.println();
-		System.out.println();
-		System.out.println("Testing for photo URL construction: ");
-		System.out.println(photoPathString);
-		System.out.println();
-		System.out.println();
-		
-		/*
-		Path photoPath = Paths.get(new URI(
-				"https://res.cloudinary.com/nicko1teck/image/fetch/https://res.cloudinary.com/nicko1teck/image/upload/v1602199667/MTDeductive_100x100_gubzzf.jpg"));
-
-		*/
-		
-		
-		
 		//Path photoPath = Paths.get(photoUploadDirectory, "default","productive-hobbies100x100.jpg");
 
 		/*
@@ -367,34 +319,6 @@ public class ProfileController {
 				.contentType(MediaType.parseMediaType(URLConnection.guessContentTypeFromName(photoPath.toString())))
 				.body(new InputStreamResource(Files.newInputStream(photoPath, StandardOpenOption.READ)));
 	}
-
-	/*
-	 * 
-	 * @RequestMapping(value = "/profilephoto/{id}", method = RequestMethod.GET)
-	 * 
-	 * @ResponseBody ResponseEntity<InputStreamResource> servePhoto2(@PathVariable
-	 * Long id)throws IOException {
-	 * 
-	 * 
-	 * Optional<SiteUser> userOpt = userService.get(id); SiteUser user =
-	 * userOpt.get(); Profile profile = profileService.getUserProfile(user);
-	 * 
-	 * 
-	 * Path photoPath = Paths.get(photoUploadDirectory, "default",
-	 * "productive-hobbies100x100.jpg"); //Path photoPath2 =
-	 * Paths.get(photoUploadDirectory, "default");
-	 * 
-	 * if (profile != null && profile.getPhoto(photoUploadDirectory) != null) {
-	 * photoPath = profile.getPhoto(photoUploadDirectory); }
-	 * 
-	 * return ResponseEntity.ok() .contentLength(Files.size(photoPath))
-	 * .contentType(MediaType.parseMediaType(URLConnection.guessContentTypeFromName(
-	 * photoPath.toString()))) .body(new
-	 * InputStreamResource(Files.newInputStream(photoPath,
-	 * StandardOpenOption.READ))); }
-	 * 
-	 * 
-	 */
 
 	
 	

@@ -7,6 +7,7 @@
 
 
 
+
 <!--<c:url var="img" value="/profilephoto/${userId}" />-->
 <c:url var="profilePhoto" value="/profilephoto/${userId}" />
 <c:url var="editProfileAbout" value="/edit-profile-about" />
@@ -20,8 +21,8 @@
 	<div class="col-md-10 col-md-offset-1">
 
 		<div id="profile-name">
-			<c:out value="${firstname}" />
-			's profile
+
+			<c:out value="${firstname}"/>'s profile
 			<!--  &nbsp;<c:out value="${surname}"/>'s profile   -->
 		</div>
 
@@ -46,8 +47,8 @@
 		<div class="profile-about">
 			<div class="profile-image">
 				<div>
-					<!--  <img id="profilePhotoImage" src="${url}" />">   -->
-				</div>
+					<img src="${userPhotoUrl}" />
+				
 
 				<div class="text-center">
 					<c:if test="${ownProfile == true}">
@@ -60,11 +61,13 @@
 					</c:if>
 				</div>
 			</div>
+				
+			</div>
 
 			<div class="profile-text">
 				<c:choose>
-					<c:when test="${profile.about == null}">
-					Click 'edit' to add information about yourself to your profile
+					<c:when test="${ownProfile == true}">
+					Click 'edit' to add/edit information about yourself to your profile
 					</c:when>
 					<c:otherwise>
 						${profile.about}
@@ -72,13 +75,7 @@
 				</c:choose>
 			</div>
 
-			<form method="post" enctype="multipart/form-data"
-				id="photoUploadForm" action="/upload">
-
-				select photo: <input type="file" accept="*" name="file"
-					id="photoFileInput" /> <input type="submit" value="upload" /> <input
-					type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-			</form>
+			
 		</div>
 
 		<div class="profile-about-edit">
@@ -92,7 +89,31 @@
 
 
 <script>
-	
+	function setUploadStatusText(text) {
+		$("#profile-photo-status").text(text);
+		window.setTimeout(function() {
+			$("#profile-photo-status").text("");
+		}, 2000);
+	}
+	function uploadSuccess(data) {
+		$("#profilePhotoImage").attr("src", "${profilePhoto}?t=" + new Date().getMilliseconds());
+		$("#photoFileInput").val("");
+		setUploadStatusText(data.message);
+	}
+	function uploadPhoto(event) {
+		$.ajax({
+			url : $(this).attr("action"),
+			type : 'POST',
+			data : new FormData(this),
+			processData : false,
+			contentType : false,
+			success : uploadSuccess,
+			error : function() {
+				setUploadStatusText("Image upload failed (invalid image?)");
+			}
+		});
+		event.preventDefault();
+	}
 	function saveInterest(text) {
 		editInterest(text, "${saveInterest}");
 	}
@@ -132,26 +153,15 @@
 			caseSensitive : false,
 			allowSpaces : true,
 			tagLimit : 10,
-			readOnly : '${ownProfile}' == 'false'
+			readOnly: '${ownProfile}' == 'false'
 		});
-		
+		$("#uploadLink").click(function(event) {
+			event.preventDefault();
+			$("#photoFileInput").trigger('click');
+		});
+		$("#photoFileInput").change(function() {
+			$("#photoUploadForm").submit();
+		});
+		$("#photoUploadForm").on("submit", uploadPhoto);
+	});
 </script>
-
-
-
-<!--  
-<script type="text/javascript">  
-var myWidget = cloudinary.createUploadWidget({
-  cloudName: 'nicko1teck', 
-  uploadPreset: 'apzbavjn'}, (error, result) => { 
-    if (!error && result && result.event === "success") { 
-      console.log('Done! Here is the image info: ', result.info); 
-    }
-  }
-)
-
-document.getElementById("upload_widget").addEventListener("click", function(){
-    myWidget.open();
-  }, false);
-</script>
--->

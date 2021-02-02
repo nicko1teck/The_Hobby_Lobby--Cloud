@@ -55,24 +55,10 @@ public class SiteUser {
 	@Transient
 	private String repeatPassword;
 	
-	
-	//@Column(name="profile_photo_name")
-	//private String profilePhotoName;
-	
-	@Column(name="profile_photo_url")
-	private String profilePhotoUrl;
-	
-	
-	
-	public String getProfilePhotoUrl() {
-		return profilePhotoUrl;
-	}
-
-	public void setProfilePhotoUrl(String profilePhotoUrl) {
-		this.profilePhotoUrl = profilePhotoUrl;
-	}
 
 	public SiteUser(){
+		
+		this.userPhotoUrl = "https://res.cloudinary.com/nicko1teck/image/upload/v1611592546/productive-hobbies100x100_ysauou.jpg";
 		
 	}
 	
@@ -82,21 +68,13 @@ public class SiteUser {
 		this.email = email;
 		this.setPlainPassword(password);
 		this.repeatPassword = password;
-		this.profilePhotoUrl = "https://res.cloudinary.com/nicko1teck/image/upload/v1603334618/vbux7ajerlgvplrzsrm6.jpg";
+		//
+		// HARD CODED FOR TESTING
+		this.userPhotoUrl = "https://res.cloudinary.com/nicko1teck/image/upload/v1611592546/productive-hobbies100x100_ysauou.jpg";
+							    
 	}
 	
 	
-	
-	
-
-	public String getProfilePhotoName() {
-		return profilePhotoUrl;
-	}
-
-	public void setProfilePhotoName(String profilePhotoName) {
-		this.profilePhotoUrl = profilePhotoName;
-	}
-
 	public SiteUser(Long id, @Email(message = "{register.email.invalid}") String email,
 			@Size(min = 2, max = 20, message = "{register.firstname.size}") String firstname,
 			@Size(min = 2, max = 25, message = "{register.surname.size}") String surname, String role, boolean enabled,
@@ -111,8 +89,32 @@ public class SiteUser {
 		this.enabled = enabled;
 		this.plainPassword = plainPassword;
 		this.repeatPassword = repeatPassword;
-		this.profilePhotoUrl = profilePhotoUrl;
+		//this.profilePhotoUrl = profilePhotoUrl;
 		this.password = password;
+	}
+	
+	@Column(name="user_photo_url")
+	private String userPhotoUrl;
+	
+	@Column(name="user_photo_name")
+	private String userPhotoName;
+	
+	
+	public String getProfilePhotoUrl() {
+		return userPhotoUrl;
+	}
+
+	public void setProfilePhotoUrl(String userPhotoUrl) {
+		this.userPhotoUrl = userPhotoUrl;
+	}
+	
+	
+	public String getProfilePhotoName() {
+		return userPhotoName;
+	}
+
+	public void setProfilePhotoName(String userPhotoName) {
+		this.userPhotoName = userPhotoName;
 	}
 
 	public String getFirstname() {

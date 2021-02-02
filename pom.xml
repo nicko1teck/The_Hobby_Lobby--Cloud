@@ -17,6 +17,15 @@
 
 	<dependencies>
 
+		
+
+		<!-- https://stackoverflow.com/questions/18042247/could-not-get-constructor-for-org-hibernate-persister-entity-singletableentitype -->
+		<dependency>
+			<groupId>org.javassist</groupId>
+			<artifactId>javassist</artifactId>
+			<version>3.25.0-GA</version>
+		</dependency>
+
 
 
 		<dependency>
@@ -206,7 +215,7 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	
+
 	<packaging>war</packaging>
 	<build>
 		<plugins>
@@ -249,7 +258,7 @@
 				<artifactId>sockjs-client</artifactId>
 				<version>1.1.2</version>
 			</dependency>
-			
+
 
 		</dependencies>
 

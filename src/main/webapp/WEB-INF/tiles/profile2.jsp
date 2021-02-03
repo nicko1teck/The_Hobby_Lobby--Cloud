@@ -21,7 +21,6 @@
 	<div class="col-md-10 col-md-offset-1">
 
 		<div id="profile-name">
-
 			<c:out value="${firstname}"/>'s profile
 			<!--  &nbsp;<c:out value="${surname}"/>'s profile   -->
 		</div>
@@ -48,13 +47,13 @@
 			<div class="profile-image">
 				<div>
 					<img src="${userPhotoUrl}" />
-				
+				</div>
 
-				<div class="text-center">
+				<div>
 					<c:if test="${ownProfile == true}">
 
 						<form action="/upload" method="post" enctype="multipart/form-data">
-							select photo: <input type="file" accept="*" name="file" /> <input
+							<input type="file" accept="*" name="file" /> <input
 								type="submit" value="Upload File" /> <input type="hidden"
 								name="${_csrf.parameterName}" value="${_csrf.token}" />
 						</form>
@@ -62,11 +61,13 @@
 				</div>
 			</div>
 				
-			</div>
+		
 
 			<div class="profile-text">
 				<c:choose>
 					<c:when test="${ownProfile == true}">
+					<br>
+					<br>
 					Click 'edit' to add/edit information about yourself to your profile
 					</c:when>
 					<c:otherwise>
@@ -84,7 +85,7 @@
 			</c:if>
 		</div>
 	</div>
-</div>
+
 
 
 

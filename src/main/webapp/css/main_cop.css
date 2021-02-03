@@ -15,11 +15,17 @@
 }
 
 
+.i-am-centered 
+	{ margin: auto; 
+	max-width: 300px;
+}
+
+
 
 /*----------------------------------------------------------------------*/
 
 .navbar {
-	background-color: magenta;
+	background-color: #ffcc5c;
 	border-color: purple;
 }
 

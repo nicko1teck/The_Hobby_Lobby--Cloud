@@ -89,31 +89,7 @@
 
 
 <script>
-	function setUploadStatusText(text) {
-		$("#profile-photo-status").text(text);
-		window.setTimeout(function() {
-			$("#profile-photo-status").text("");
-		}, 2000);
-	}
-	function uploadSuccess(data) {
-		$("#profilePhotoImage").attr("src", "${profilePhoto}?t=" + new Date().getMilliseconds());
-		$("#photoFileInput").val("");
-		setUploadStatusText(data.message);
-	}
-	function uploadPhoto(event) {
-		$.ajax({
-			url : $(this).attr("action"),
-			type : 'POST',
-			data : new FormData(this),
-			processData : false,
-			contentType : false,
-			success : uploadSuccess,
-			error : function() {
-				setUploadStatusText("Image upload failed (invalid image?)");
-			}
-		});
-		event.preventDefault();
-	}
+	
 	function saveInterest(text) {
 		editInterest(text, "${saveInterest}");
 	}
@@ -155,13 +131,11 @@
 			tagLimit : 10,
 			readOnly: '${ownProfile}' == 'false'
 		});
-		$("#uploadLink").click(function(event) {
-			event.preventDefault();
-			$("#photoFileInput").trigger('click');
-		});
-		$("#photoFileInput").change(function() {
-			$("#photoUploadForm").submit();
-		});
-		$("#photoUploadForm").on("submit", uploadPhoto);
+
+
+
+
+
+		
 	});
 </script>

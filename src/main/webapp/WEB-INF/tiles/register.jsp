@@ -8,6 +8,8 @@
 
 <c:url var="loginUrl" value="/login" />
 
+
+<div class="i-am-centered">
 <div class="row">
 
 	<!--  <div class="col-md-8 col-md-offset-2"> -->
@@ -65,5 +67,7 @@
 		</div>
 
 	</div>
+
+</div>
 
 </div>

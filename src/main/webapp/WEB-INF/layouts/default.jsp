@@ -3,6 +3,7 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec"%>
 
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -17,8 +18,7 @@
 <meta name="_csrf_header" content="${_csrf.headerName}"/>
 
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<script
-	src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 
 <title><tiles:insertAttribute name="title" /></title>
 
@@ -31,11 +31,9 @@
 <!-- This is only for javascript tagging on the profile -->
 <link href="${contextRoot}/css/jquery.tagit.css" rel="stylesheet">
 
-<script
-	src="${contextRoot}/js/jquery-ui.min.js"></script>
+<script src="${contextRoot}/js/jquery-ui.min.js"></script>
 
-<script
-	src="${contextRoot}/js/tag-it.min.js"></script>
+<script src="${contextRoot}/js/tag-it.min.js"></script>
 
 <script src="${contextRoot}/js/connectionmanager.js"></script>	
 <script src="/webjars/sockjs-client/sockjs.min.js"></script>

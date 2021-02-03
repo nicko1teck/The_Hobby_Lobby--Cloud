@@ -21,21 +21,23 @@
 	
 </div>
 
+<div class="i-am-centered">
 
-<div class="row">
+	<div class="row">
 
-	<!--  <div class="col-md-8 col-md-offset-2"> -->
-	<div class="mx-auto">
+		
+	
 
 		<c:if test="${param.error != null}">
 			<div class="login-error">Incorrect username or password.</div>
 		</c:if>
+
 		
-		<div class="card">
+	
+		
 
 			<div class="card-header">
 				<h5 class="card-header-title">User Login</h5>
-
 			</div>
 
 			<div class="card-body">
@@ -58,8 +60,9 @@
 				</form>
 			</div>
 
-		</div>
+		
+
+	
 
 	</div>
-
 </div>

@@ -11,6 +11,7 @@ public class SearchResults {
 	private Set<Interest> interests;
 	private String firstname;
 	private String surname;
+	private String profilePhotoUrl;
 
 	public SearchResults(){
 	}
@@ -21,6 +22,7 @@ public class SearchResults {
 		interests = profile.getInterests();
 		firstname = profile.getUser().getFirstname();
 		surname = profile.getUser().getSurname();
+		profilePhotoUrl = profile.getUser().getProfilePhotoUrl();
 	}
 
 
@@ -33,6 +35,7 @@ public class SearchResults {
 		this.userId = userId;
 	}
 
+	
 
 	public Set<Interest> getInterests() {
 		return interests;
@@ -63,6 +66,14 @@ public class SearchResults {
 		this.surname = surname;
 	}
 
+
+	public String getProfilePhotoUrl() {
+		return profilePhotoUrl;
+	}
+
+	public void setProfilePhotoUrl(String profilePhotoUrl) {
+		this.profilePhotoUrl = profilePhotoUrl;
+	}
 
 	@Override
 	public String toString() {

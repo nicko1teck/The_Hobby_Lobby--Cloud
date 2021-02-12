@@ -43,7 +43,7 @@ You searched by hobby: ${s}
 		<div class="col-md-12">
 
 			<div class="results-photo">
-				<a href="${profilelink}"><img id="profilePhotoImage" src="${profilePhoto}" /></a>
+				<a href="${profilelink}"><img id="profilePhotoImage" src="${result.profilePhotoUrl}" /></a>
 			</div>
 
 			<div class="results-details">

@@ -62,12 +62,12 @@ public class EmailService {
 	@Async
 	public void sendVerificationEmail(String emailAddress, String token){
 		
-		/*
+		
 		StringBuilder sb = new StringBuilder();
 		sb.append("<HTML>");
 		sb.append("<p> Hellow there this is <em>HTML</em> </p>");
 		sb.append("</HTML>");
-		**/
+		
 		
 		Context context = new Context();
 		
@@ -88,11 +88,11 @@ public class EmailService {
 			MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
 					
 			message.setTo(emailAddress);
-			message.setFrom(new InternetAddress("no-reply@40ozhemlock.com"));
+			message.setFrom(new InternetAddress("bluecollarcoding@gmail.com"));
 			message.setSubject("Verify your email address");
 			message.setSentDate(new Date());
-			//message.setText("Please confirm your email by clicking this non-existent link");	
-			//message.setText(sb.toString(), true);
+			message.setText("Please confirm your email by clicking this non-existent link");	
+			message.setText(sb.toString(), true);
 			message.setText(emailContents, true);
 			}	
 		};

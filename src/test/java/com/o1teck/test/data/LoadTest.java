@@ -28,8 +28,8 @@ import com.o1teck.service.InterestService;
 import com.o1teck.service.ProfileService;
 import com.o1teck.service.UserService;
 
-
 /*
+
 //@SpringBootConfiguration
 //@RunWith(SpringJUnit4ClassRunner.class)
 @RunWith(SpringRunner.class)
@@ -37,7 +37,7 @@ import com.o1teck.service.UserService;
 //@Transactional
 public class LoadTest {
 	
-	/*
+	
 	
 	@Autowired
 	private UserService userService;
@@ -187,5 +187,5 @@ public class LoadTest {
 		
 		assertTrue(true);
 	}
-	
-}*/
+	*/
+//}  

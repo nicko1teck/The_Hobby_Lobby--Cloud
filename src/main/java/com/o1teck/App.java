@@ -42,7 +42,7 @@ public class App extends SpringBootServletInitializer {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
 
-	/*
+	
 	@Value("${cloudinary.cloud_name}")
 	private String cloudName;
 
@@ -51,7 +51,7 @@ public class App extends SpringBootServletInitializer {
 
 	@Value("${cloudinary.api_secret}")
 	private String apiSecret;
-	*/
+	
 
 	public static void main(String[] args) {
 		SpringApplication.run(App.class, args);
@@ -67,32 +67,13 @@ public class App extends SpringBootServletInitializer {
 	public Cloudinary cloudinaryConfig() {
 		Cloudinary cloudinary = null;
 		cloudinary = new Cloudinary();
-		cloudinary.config.cloudName = "nicko1teck";
-		cloudinary.config.apiKey = "697697678268857";
-		cloudinary.config.apiSecret = "UFH1ZXH_4UZ8XNHchIj8Lwhpszw";
+		cloudinary.config.cloudName = cloudName;
+		cloudinary.config.apiKey = apiKey;
+		cloudinary.config.apiSecret = apiSecret;
 		return cloudinary;
 	}
 
-	/*
-	@Bean
-	public Cloudinary cloudinaryConfig() {
-		Cloudinary cloudinary = null;
-		Map<String, String> config = new HashMap<String, String>();
-		config.put("cloud_name", cloudName);
-		config.put("api_key", apiKey);
-		config.put("api_secret", apiSecret);
-		
-		System.out.println(cloudName);
-		System.out.println(apiKey);
-		System.out.println(apiSecret);
-		
-		cloudinary = new Cloudinary(config);
-		return cloudinary;
-	}
-	*/
-
-	// The point of this is to be able to pass in a class and configure how the View
-	// works thereby
+	
 	@Bean // We're telling Spring to consider this a bean
 	public UrlBasedViewResolver tilesViewResolver() {
 		UrlBasedViewResolver tilesViewResolver = new UrlBasedViewResolver();

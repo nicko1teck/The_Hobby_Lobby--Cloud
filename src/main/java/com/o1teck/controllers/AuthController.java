@@ -1,4 +1,4 @@
-package com.o1teck.controllers;
+ package com.o1teck.controllers;
 
 import java.io.FileNotFoundException;
 import java.util.Date;
@@ -138,7 +138,8 @@ ModelAndView register(ModelAndView modelAndView, /* @ModelAttribute(value="user"
 		
 		emailService.sendVerificationEmail(user.getEmail(), token);
 		
-		modelAndView.setViewName("redirect:/pleaseverify");
+		//modelAndView.setViewName("redirect:/pleaseverify");
+		modelAndView.setViewName("app.pleaseverify");
 	}
 	
 	return modelAndView;

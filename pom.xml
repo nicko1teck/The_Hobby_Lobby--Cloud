@@ -17,7 +17,7 @@
 
 	<dependencies>
 
-		
+
 
 		<!-- https://stackoverflow.com/questions/18042247/could-not-get-constructor-for-org-hibernate-persister-entity-singletableentitype -->
 		<dependency>
@@ -123,6 +123,13 @@
 			<version>3.0.7</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.apache.tiles</groupId>
+			<artifactId>tiles-extras</artifactId>
+			<version>3.0.5</version>
+		</dependency>
+
+
 		<!-- https://mvnrepository.com/artifact/javax.servlet/jstl -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -218,6 +225,23 @@
 
 	<packaging>jar</packaging>
 	<build>
+
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+
+			<resource>
+				<directory>src/main/webapp</directory>
+			</resource>
+
+			<resource>
+				<directory>static</directory>
+				<targetPath>static</targetPath>
+			</resource>
+			
+		</resources>
+
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

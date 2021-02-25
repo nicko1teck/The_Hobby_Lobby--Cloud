@@ -3,11 +3,14 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <c:url var="search" value="/search" />
+<c:url var="img" value="/img" />
 
 <div class="row">
 		<!--  <div class="mx-auto"> -->
 			<div class="homepage-banner-container mx-auto">
-				<img id="banner-image" src="/img/productive-hobbies.jpg" />
+				<img id="banner-image" src="${img}/productive-hobbies.jpg" />
+										
+			
 			</div>
 	
 	</div>

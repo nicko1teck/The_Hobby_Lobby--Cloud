@@ -2,13 +2,17 @@ package com.o1teck.controllers;
 
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.Map;
 import java.util.Optional;
@@ -27,8 +31,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 //import org.springframework.util.ObjectUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,7 +41,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
@@ -48,7 +49,7 @@ import com.o1teck.model.entity.Interest;
 import com.o1teck.model.entity.Profile;
 import com.o1teck.model.entity.SiteUser;
 import com.o1teck.model.repository.UserDao;
-import com.o1teck.service.CloudinaryService;
+//import com.o1teck.service.CloudinaryService;
 import com.o1teck.service.FileService;
 import com.o1teck.service.InterestService;
 import com.o1teck.service.ProfileService;
@@ -241,16 +242,47 @@ public class ProfileController {
 	
 	
 	
-	@PostMapping("/upload")
+	@PostMapping("upload")
+	//@RequestMapping(value ="upload", method = RequestMethod.POST)
     @ResponseBody
-    public ModelAndView uploadFile(ModelAndView modelAndView, @RequestParam("file") MultipartFile file) throws IOException, URISyntaxException, ServletException {
-    			
-		// Get the file's bytes
-		byte[] fileBytes = file.getBytes();
-		
-		// Upload to cloudinary
-    	Map responseMap = cloudinary.uploader().unsignedUpload(fileBytes, "apzbavjn", ObjectUtils.asMap("cloud_name", "nicko1teck"));
+    public String uploadFile(ModelAndView modelAndView, @RequestParam("file") MultipartFile file) throws IOException, URISyntaxException, ServletException {
     	
+			
+		byte[] fileBytes = null;
+			
+		
+		// Get the file's bytes
+		fileBytes = file.getBytes();
+		
+		Map responseMap = null;
+		
+		
+		
+		//////////////////////////////////////////////////////////////////////////////////////////////
+		/*
+		File uploadedFile = File.createTempFile("image", ".tmp");
+
+        InputStream content = file.getInputStream();
+
+        Files.copy(content, uploadedFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+        //String filename = CloudinaryFacade.upload(uploadedFile);
+        */
+		///////////////////////////////////////////////////////////////////////////////////////////////
+		
+		
+		try {
+		// Upload to cloudinary
+    	responseMap = cloudinary.uploader().unsignedUpload(fileBytes, "apzbavjn", ObjectUtils.asMap());    //("cloud_name", "nicko1teck"));  
+    	
+    	
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+    	
+    		System.out.println();
+    		System.out.println(responseMap.toString());
+    		
     	// Turn response into JSON data
     	JSONObject json=new JSONObject(responseMap);
     	
@@ -284,7 +316,9 @@ public class ProfileController {
 		userService.save(user);
 	
     	//modelAndView.setViewName("app.profile");
-    	return modelAndView;
+		//modelAndView.setViewName("redirect:/profile");
+    	//return modelAndView;
+		return url;
     }
 	
 	

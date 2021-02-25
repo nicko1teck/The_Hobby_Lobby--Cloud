@@ -2,10 +2,11 @@
 <!DOCTYPE tiles-definitions PUBLIC
        "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
        "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+       
 
 
 <tiles-definitions>
-	<definition name="app.default" template="/WEB-INF/layouts/default.jsp">
+	<definition name="app.default" template="layouts/default.jsp">
 		<put-attribute name="title" value="the HOBBY Lobby" />
 		<put-attribute name="chatnotifications" value="/WEB-INF/tiles/chatnotifications.jsp" cascade="true" />
 	</definition>

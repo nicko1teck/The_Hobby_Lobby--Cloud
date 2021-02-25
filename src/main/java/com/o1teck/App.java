@@ -25,6 +25,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
 import org.springframework.web.servlet.view.tiles3.TilesConfigurer;
@@ -56,32 +57,66 @@ public class App extends SpringBootServletInitializer {
 	public static void main(String[] args) {
 		SpringApplication.run(App.class, args);
 	}
+	
+	
+	
+	/*
 
 	@Override // This method allows us to run/deploy to existing Tomcat (rather than embedded)
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
 		return application.sources(App.class);
 	}
 	
+	*/
 	
 	@Bean
 	public Cloudinary cloudinaryConfig() {
 		Cloudinary cloudinary = null;
 		cloudinary = new Cloudinary();
+		cloudinary.config.cloudName = "nicko1teck";
+		cloudinary.config.apiKey = "697697678268857";
+		cloudinary.config.apiSecret = "UFH1ZXH_4UZ8XNHchIj8Lwhpszw";
+		return cloudinary;
+	}
+	
+	
+	/*
+	@Bean
+	public Cloudinary cloudinaryConfig() {
+		Cloudinary cloudinary = null;
+		cloudinary = new Cloudinary();
+		
 		cloudinary.config.cloudName = cloudName;
 		cloudinary.config.apiKey = apiKey;
 		cloudinary.config.apiSecret = apiSecret;
+		
+		//this.cloudName = cloudName;
+		//this.apiKey = apiKey;
+		//this.apiSecret = apiSecret;
+		
 		return cloudinary;
 	}
+	*/
 
+	
 	
 	@Bean // We're telling Spring to consider this a bean
 	public UrlBasedViewResolver tilesViewResolver() {
 		UrlBasedViewResolver tilesViewResolver = new UrlBasedViewResolver();
 
-		tilesViewResolver.setViewClass(TilesView.class);
+		tilesViewResolver.setViewClass(org.springframework.web.servlet.view.tiles3.TilesView.class);
 
 		return tilesViewResolver;
 	}
+	
+	
+	
+
+	
+	
+	
+	
+	
 
 	@Bean
 	public TilesConfigurer tilesConfigurer() {
@@ -89,8 +124,11 @@ public class App extends SpringBootServletInitializer {
 		TilesConfigurer tilesConfigurer = new TilesConfigurer();
 
 		// Tell Tiles what configuration to use
-		String[] defs = { "/WEB-INF/tiles.xml" };
-		tilesConfigurer.setDefinitions(defs);
+		//String[] defs = { "/WEB-INF/tiles.xml" };
+		//String[] defs = { "/tiles.xml" };
+		String[] defs = { "classpath:tiles.xml" };
+		//String[] defs = { "https://practice-boot-deploy.s3.us-east-2.amazonaws.com/tiles.xml" };
+			tilesConfigurer.setDefinitions(defs);
 
 		return tilesConfigurer;
 	}
@@ -122,7 +160,11 @@ public class App extends SpringBootServletInitializer {
 			@Override
 			public void customize(ConfigurableServletWebServerFactory factory) {
 				factory.addErrorPages(new ErrorPage(HttpStatus.FORBIDDEN, "/403"));
+				//factory.setContextPath("");
 			}
+			
+			
+			
 		};
 	}
 
@@ -177,13 +219,14 @@ public class App extends SpringBootServletInitializer {
 	// This was SpringWebConfig in the cloudinary Imp I'm copying
 	////////////////////////////////////////////////////////////////
 
+	/*
 	@Bean
 	public InternalResourceViewResolver jspViewResolver() {
 		InternalResourceViewResolver bean = new InternalResourceViewResolver();
 		bean.setViewClass(org.springframework.web.servlet.view.JstlView.class);
-		bean.setPrefix("/WEB-INF/views/");
+		bean.setPrefix("/WEB-INF/");
 		bean.setSuffix(".jsp");
 		return bean;
 	}
-
+	 */
 }

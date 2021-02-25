@@ -14,7 +14,7 @@
 <c:url var="saveInterest" value="/save-interest" />
 <c:url var="deleteInterest" value="/delete-interest" />
 
-
+<c:set var="contextRoot" value="${pageContext.request.contextPath}" />
 
 <div class="row">
 
@@ -52,7 +52,7 @@
 				<div>
 					<c:if test="${ownProfile == true}">
 
-						<form action="/upload" method="post" enctype="multipart/form-data">
+						<form action="upload" method="post" enctype="multipart/form-data">
 							<input type="file" accept="*" name="file" /> <input
 								type="submit" value="Upload File" /> <input type="hidden"
 								name="${_csrf.parameterName}" value="${_csrf.token}" />

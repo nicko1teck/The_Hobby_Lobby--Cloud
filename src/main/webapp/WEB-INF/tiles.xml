@@ -6,7 +6,7 @@
 
 
 <tiles-definitions>
-	<definition name="app.default" template="layouts/default.jsp">
+	<definition name="app.default" template="jsp/default.jsp">
 		<put-attribute name="title" value="the HOBBY Lobby" />
 		<put-attribute name="chatnotifications" value="/WEB-INF/tiles/chatnotifications.jsp" cascade="true" />
 	</definition>

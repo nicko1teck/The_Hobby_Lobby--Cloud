@@ -1,8 +1,5 @@
 package com.o1teck;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
@@ -13,33 +10,33 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.server.ErrorPage;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
-import org.springframework.web.servlet.view.UrlBasedViewResolver;
+import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.tiles3.TilesConfigurer;
-import org.springframework.web.servlet.view.tiles3.TilesView;
+import org.springframework.web.servlet.view.tiles3.TilesViewResolver;
 
 import com.cloudinary.Cloudinary;
 
 //  https://github.com/princesoni1989/Spring-Boot-Cloudinary/blob/master/src/main/java/com/cloudinary/upload/UploadApplication.java
 
+
 @EnableAsync
 @SpringBootApplication
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 //@ComponentScan({"com.o1teck.controllers","com.o1teck"})
-public class App extends SpringBootServletInitializer {
+public class App extends SpringBootServletInitializer implements WebMvcConfigurer {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
 
@@ -99,7 +96,7 @@ public class App extends SpringBootServletInitializer {
 	*/
 
 	
-	
+	/*
 	@Bean // We're telling Spring to consider this a bean
 	public UrlBasedViewResolver tilesViewResolver() {
 		UrlBasedViewResolver tilesViewResolver = new UrlBasedViewResolver();
@@ -108,30 +105,36 @@ public class App extends SpringBootServletInitializer {
 
 		return tilesViewResolver;
 	}
+	*/
 	
 	
-	
-
-	
-	
-	
-	
-	
-
 	@Bean
-	public TilesConfigurer tilesConfigurer() {
+    public TilesConfigurer tilesConfigurer() {
+        TilesConfigurer tilesConfigurer = new TilesConfigurer();
+        tilesConfigurer.setDefinitions(
+          new String[] { "tiles.xml" });
+        	
+        tilesConfigurer.setCheckRefresh(true);
+        return tilesConfigurer;
+    }
+    @Override
+    public void configureViewResolvers(ViewResolverRegistry registry) {
+        TilesViewResolver viewResolver = new TilesViewResolver();
+        registry.viewResolver(viewResolver);
+    }
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/css/**")
+        .addResourceLocations("/css/");
+        registry.addResourceHandler("/img/**")
+        .addResourceLocations("/img/");
+        registry.addResourceHandler("/js/**")
+        .addResourceLocations("/js/");
+    }
+	
 
-		TilesConfigurer tilesConfigurer = new TilesConfigurer();
-
-		// Tell Tiles what configuration to use
-		//String[] defs = { "/WEB-INF/tiles.xml" };
-		//String[] defs = { "/tiles.xml" };
-		String[] defs = { "classpath:tiles.xml" };
-		//String[] defs = { "https://practice-boot-deploy.s3.us-east-2.amazonaws.com/tiles.xml" };
-			tilesConfigurer.setDefinitions(defs);
-
-		return tilesConfigurer;
-	}
+	
+	
 
 	// BCrypt password encoding
 	@Bean

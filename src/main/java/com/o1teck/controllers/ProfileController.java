@@ -82,8 +82,8 @@ public class ProfileController {
 	//private String profilePhotoName;
 	
 	
-	@Value("${photo.upload.directory}")
-	private String photoUploadDirectory;
+	//@Value("${photo.upload.directory}")
+	//private String photoUploadDirectory;
 
 	@Value("${photo.upload.ok}")
 	private String photoStatusOK;
@@ -355,7 +355,7 @@ public class ProfileController {
 		
 		System.out.println();
 		System.out.println();
-		System.out.println("IS ANYTHING FUCKING WORKING?");
+		System.out.println("IS ANYTHING WORKING?");
 		System.out.println();
 		System.out.println();
 

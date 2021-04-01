@@ -26,8 +26,6 @@
 			<version>3.25.0-GA</version>
 		</dependency>
 
-
-
 		<dependency>
 			<groupId>com.google.http-client</groupId>
 			<artifactId>google-http-client</artifactId>
@@ -216,7 +214,7 @@
 		</dependency>
 	</dependencies>
 
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 	<build>
 		<plugins>
 			<plugin>

@@ -31,6 +31,7 @@ import org.springframework.web.servlet.view.tiles3.TilesConfigurer;
 import org.springframework.web.servlet.view.tiles3.TilesView;
 
 import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 
 //  https://github.com/princesoni1989/Spring-Boot-Cloudinary/blob/master/src/main/java/com/cloudinary/upload/UploadApplication.java
 
@@ -66,10 +67,15 @@ public class App extends SpringBootServletInitializer {
 	@Bean
 	public Cloudinary cloudinaryConfig() {
 		Cloudinary cloudinary = null;
-		cloudinary = new Cloudinary();
-		cloudinary.config.cloudName = cloudName;
-		cloudinary.config.apiKey = apiKey;
-		cloudinary.config.apiSecret = apiSecret;
+		//cloudinary = new Cloudinary();
+		cloudinary = new Cloudinary(ObjectUtils.asMap(
+				  "cloud_name", cloudName,
+				  "api_key", apiKey,
+				  "api_secret", apiSecret));
+		
+		//cloudinary.config.cloudName = cloudName;
+		//cloudinary.config.apiKey = apiKey;
+		//cloudinary.config.apiSecret = apiSecret;
 		return cloudinary;
 	}
 

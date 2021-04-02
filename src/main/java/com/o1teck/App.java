@@ -146,6 +146,8 @@ public class App extends SpringBootServletInitializer {
 	// TRYING TO BUILD IN CLOUDINARY IMP
 	/////////////////////////////////////////////////////////////////////////////////////////////
 
+	
+	/*
 	@Override
 	public void onStartup(ServletContext servletContext) throws ServletException {
 
@@ -158,6 +160,7 @@ public class App extends SpringBootServletInitializer {
 
 		super.onStartup(servletContext);
 	}
+	*/
 
 	/*
 	 * @Override protected Class<?>[] getRootConfigClasses() {
@@ -182,7 +185,7 @@ public class App extends SpringBootServletInitializer {
 	////////////////////////////////////////////////////////////////
 	// This was SpringWebConfig in the cloudinary Imp I'm copying
 	////////////////////////////////////////////////////////////////
-
+/*
 	@Bean
 	public InternalResourceViewResolver jspViewResolver() {
 		InternalResourceViewResolver bean = new InternalResourceViewResolver();
@@ -191,5 +194,5 @@ public class App extends SpringBootServletInitializer {
 		bean.setSuffix(".jsp");
 		return bean;
 	}
-
+*/
 }
